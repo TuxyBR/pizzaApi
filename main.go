@@ -1,19 +1,15 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
 	"strconv"
 
-	"github.com/TuxyBR/pizzaApi/models"
+	"github.com/TuxyBR/pizzaApi/internal/data"
+	"github.com/TuxyBR/pizzaApi/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
-var pizzas []models.Pizza
-
 func main() {
-	loadPizzas()
+	data.LoadPizzas()
 	r := gin.Default()
 	r.GET("/pizzas", getPizzas)
 	r.GET("/pizzas/:id", getPizzaId)
@@ -57,36 +53,4 @@ func postPizzas(c *gin.Context) {
 	pizzas = append(pizzas, newPizza)
 
 	c.JSON(201, newPizza)
-}
-
-func loadPizzas() {
-	file, err := os.Open("data/pizzas.json")
-	if err != nil {
-		fmt.Printf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
-		return
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&pizzas)
-	if err != nil {
-		fmt.Printf("ocorreu um erro decodificar o arquivo: %v\n", err)
-		return
-	}
-}
-
-func savePizza() {
-	file, err := os.Create("data/pizzas.json")
-	if err != nil {
-		fmt.Printf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
-		return
-	}
-	defer file.Close()
-
-	encoder := json.NewEncoder(file)
-	err = encoder.Encode(pizzas)
-	if err != nil {
-		fmt.Printf("ocorreu um erro ao gerar o arquivo: %v\n", err)
-		return
-	}
 }
