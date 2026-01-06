@@ -44,6 +44,7 @@ func getPizzaId(c *gin.Context) {
 }
 
 func postPizzas(c *gin.Context) {
+	defer savePizza()
 	var newPizza = models.Pizza{}
 	err := c.ShouldBindJSON(&newPizza)
 	if err != nil {
@@ -52,7 +53,10 @@ func postPizzas(c *gin.Context) {
 		})
 		return
 	}
+	newPizza.ID = len(pizzas) + 1
 	pizzas = append(pizzas, newPizza)
+
+	c.JSON(201, newPizza)
 }
 
 func loadPizzas() {
@@ -67,6 +71,22 @@ func loadPizzas() {
 	err = decoder.Decode(&pizzas)
 	if err != nil {
 		fmt.Printf("ocorreu um erro decodificar o arquivo: %v\n", err)
+		return
+	}
+}
+
+func savePizza() {
+	file, err := os.Create("data/pizzas.json")
+	if err != nil {
+		fmt.Printf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(pizzas)
+	if err != nil {
+		fmt.Printf("ocorreu um erro ao gerar o arquivo: %v\n", err)
 		return
 	}
 }
