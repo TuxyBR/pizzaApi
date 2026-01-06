@@ -14,9 +14,22 @@ var pizzas = []models.Pizza{
 func main() {
 	r := gin.Default()
 	r.GET("/pizzas", getPizzas)
+	r.POST("/pizzas", postPizzas)
 	r.Run()
 }
 
 func getPizzas(c *gin.Context) {
 	c.JSON(200, gin.H{"pizzas": pizzas})
+}
+
+func postPizzas(c *gin.Context) {
+	var newPizza = models.Pizza{}
+	err := c.ShouldBindJSON(&newPizza)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"erro": err.Error(),
+		})
+		return
+	}
+	pizzas = append(pizzas, newPizza)
 }
