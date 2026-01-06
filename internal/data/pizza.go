@@ -11,7 +11,7 @@ import (
 var Pizzas []models.Pizza
 
 func LoadPizzas() {
-	file, err := os.Open("data/pizzas.json")
+	file, err := os.Open("internal/data/pizzas.json")
 	if err != nil {
 		fmt.Printf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
 		return
@@ -27,7 +27,7 @@ func LoadPizzas() {
 }
 
 func SavePizza() error {
-	file, err := os.Create("data/pizzas.json")
+	file, err := os.Create("internal/data/pizzas.json")
 	if err != nil {
 		return fmt.Errorf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
 	}
