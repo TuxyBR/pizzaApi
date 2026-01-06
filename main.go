@@ -1,19 +1,19 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/TuxyBR/pizzaApi/models"
 	"github.com/gin-gonic/gin"
 )
 
-var pizzas = []models.Pizza{
-	{ID: 1, Name: "Toscana", Price: 49.5},
-	{ID: 2, Name: "Marguerita", Price: 79.5},
-	{ID: 3, Name: "Atum com queijo", Price: 69.5},
-}
+var pizzas []models.Pizza
 
 func main() {
+	loadPizzas()
 	r := gin.Default()
 	r.GET("/pizzas", getPizzas)
 	r.GET("/pizzas/:id", getPizzaId)
@@ -53,4 +53,20 @@ func postPizzas(c *gin.Context) {
 		return
 	}
 	pizzas = append(pizzas, newPizza)
+}
+
+func loadPizzas() {
+	file, err := os.Open("data/pizzas.json")
+	if err != nil {
+		fmt.Printf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&pizzas)
+	if err != nil {
+		fmt.Printf("ocorreu um erro decodificar o arquivo: %v\n", err)
+		return
+	}
 }
