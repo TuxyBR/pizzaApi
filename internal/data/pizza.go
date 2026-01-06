@@ -26,18 +26,17 @@ func LoadPizzas() {
 	}
 }
 
-func SavePizza() {
+func SavePizza() error {
 	file, err := os.Create("data/pizzas.json")
 	if err != nil {
-		fmt.Printf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
-		return
+		return fmt.Errorf("ocorreu um erro ao tentar carregar o arquivo: %v\n", err)
 	}
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
 	err = encoder.Encode(Pizzas)
 	if err != nil {
-		fmt.Printf("ocorreu um erro ao gerar o arquivo: %v\n", err)
-		return
+		return fmt.Errorf("ocorreu um erro ao gerar o arquivo: %v\n", err)
 	}
+	return nil
 }
