@@ -1,62 +1,71 @@
 package handler
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/TuxyBR/pizzaApi/internal/data"
 	"github.com/TuxyBR/pizzaApi/internal/models"
+	"github.com/TuxyBR/pizzaApi/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 func GetPizzas(c *gin.Context) {
-	c.JSON(200, gin.H{"pizzas": data.Pizzas})
+	c.JSON(http.StatusOK, gin.H{"pizzas": data.Pizzas})
 }
 
 func GetPizzaId(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"erro": err.Error(),
 		})
 		return
 	}
 	for _, piz := range data.Pizzas {
 		if piz.ID == id {
-			c.JSON(200, gin.H{"pizza": piz})
+			c.JSON(http.StatusOK, gin.H{"pizza": piz})
 			return
 		}
 	}
-	c.JSON(404, gin.H{"message": "pizza not found"})
+	c.JSON(http.StatusNotFound, gin.H{"message": "pizza not found"})
 }
 
 func PostPizzas(c *gin.Context) {
 	var newPizza = models.Pizza{}
 	err := c.ShouldBindJSON(&newPizza)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"erro": err.Error(),
 		})
 		return
 	}
 	newPizza.ID = len(data.Pizzas) + 1
-	data.Pizzas = append(data.Pizzas, newPizza)
-
-	err = data.SavePizza()
+	err = service.ValidadePizza(&newPizza)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusUnauthorized, gin.H{
 			"erro": err.Error(),
 		})
 		return
 	}
-	c.JSON(201, newPizza)
+	data.Pizzas = append(data.Pizzas, newPizza)
+
+	err = data.SavePizza()
+	if err != nil {
+		c.JSON(http.StatusNotModified, gin.H{
+			"erro": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusFound, newPizza)
 }
 
 func DeletePizzaId(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"erro": err.Error(),
 		})
 		return
@@ -66,23 +75,23 @@ func DeletePizzaId(c *gin.Context) {
 			data.Pizzas = append(data.Pizzas[:index], data.Pizzas[index+1:]...)
 			err := data.SavePizza()
 			if err != nil {
-				c.JSON(400, gin.H{
+				c.JSON(http.StatusBadRequest, gin.H{
 					"erro": err.Error(),
 				})
 				return
 			}
-			c.JSON(200, gin.H{"message": "Pizza deleted"})
+			c.JSON(http.StatusOK, gin.H{"message": "Pizza deleted"})
 			return
 		}
 	}
-	c.JSON(404, gin.H{"message": "Pizza not found"})
+	c.JSON(http.StatusNotFound, gin.H{"message": "Pizza not found"})
 }
 
 func UpdatePizza(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"erro": err.Error(),
 		})
 		return
@@ -91,7 +100,7 @@ func UpdatePizza(c *gin.Context) {
 	var updatedPizza = models.Pizza{}
 	err = c.ShouldBindJSON(&updatedPizza)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"erro": err.Error(),
 		})
 		return
@@ -105,14 +114,14 @@ func UpdatePizza(c *gin.Context) {
 			err := data.SavePizza()
 			if err != nil {
 				data.Pizzas[index] = oldPizza
-				c.JSON(400, gin.H{
+				c.JSON(http.StatusBadRequest, gin.H{
 					"erro": err.Error(),
 				})
 				return
 			}
-			c.JSON(200, gin.H{"Pizza": data.Pizzas[index]})
+			c.JSON(http.StatusOK, gin.H{"Pizza": data.Pizzas[index]})
 			return
 		}
 	}
-	c.JSON(404, gin.H{"message": "Pizza not found"})
+	c.JSON(http.StatusNotFound, gin.H{"message": "Pizza not found"})
 }
