@@ -16,5 +16,11 @@ func main() {
 	r.DELETE("/pizzas/:id", handler.DeletePizzaId)
 	r.PUT("/pizzas/:id", handler.UpdatePizza)
 
+	r.GET("/teste", handler.GetTeste)
+	r.GET("/teste/:id", handler.GetTesteId)
+	r.POST("/teste", handler.PostTeste)
+	r.DELETE("/teste/:id", handler.DeleteTesteId)
+	r.PUT("/teste/:id", handler.UpdateTeste)
+
 	r.Run()
 }
