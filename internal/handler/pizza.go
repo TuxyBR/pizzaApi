@@ -58,7 +58,7 @@ func PostPizzas(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusFound, newPizza)
+	c.JSON(http.StatusCreated, newPizza)
 }
 
 func DeletePizzaId(c *gin.Context) {
@@ -119,7 +119,7 @@ func UpdatePizza(c *gin.Context) {
 				})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"Pizza": data.Pizzas[index]})
+			c.JSON(http.StatusCreated, gin.H{"Pizza": data.Pizzas[index]})
 			return
 		}
 	}
