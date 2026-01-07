@@ -60,7 +60,7 @@ func DeleteTesteId(c *gin.Context) {
 		return
 	}
 	for index, test := range data.Teste {
-		if test.IDOc == id {
+		if test.IDObra == id {
 			data.Teste = append(data.Teste[:index], data.Teste[index+1:]...)
 			err := data.SaveTeste()
 			if err != nil {
