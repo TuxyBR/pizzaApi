@@ -1,1 +1,1 @@
-[{"id":1,"name":"Toscana","price":49.5},{"id":2,"name":"Marguerita","price":79.5},{"id":3,"name":"Atum com queijo","price":69.5},{"id":4,"name":"Alcatra","price":75.9},{"id":5,"name":"Banana","price":36.9}]
+[{"id":1,"name":"Toscana","price":49.5,"reviews":[{"id":1,"rating":3,"comment":"dfa"},{"id":2,"rating":4,"comment":"quatro"}]},{"id":2,"name":"Marguerita","price":79.5,"reviews":null},{"id":3,"name":"Atum com queijo","price":69.5,"reviews":null},{"id":4,"name":"Alcatra","price":75.9,"reviews":null},{"id":5,"name":"Banana","price":36.9,"reviews":null}]
